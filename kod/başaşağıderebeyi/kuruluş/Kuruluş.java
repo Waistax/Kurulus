@@ -8,7 +8,7 @@ package başaşağıderebeyi.kuruluş;
 import başaşağıderebeyi.motor.*;
 
 public class Kuruluş implements Uygulama {
-	public static final String SÜRÜM = "0.3";
+	public static final String SÜRÜM = "0.4";
 	
 	@Override
 	public void yükle() {
