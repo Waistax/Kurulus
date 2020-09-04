@@ -23,13 +23,8 @@ public class Halk {
 	}
 	
 	public void ekle(Halk halk) {
-		for (Kimlik kimlik : halk.nitelik.keySet()) {
-			Integer kimlikNiceliği = nitelik.get(kimlik);
-			if (kimlikNiceliği == null)
-				nitelik.put(kimlik, halk.nitelik.get(kimlik));
-			else
-				nitelik.put(kimlik, kimlikNiceliği + halk.nitelik.get(kimlik));
-		}
+		for (Kimlik kimlik : halk.nitelik.keySet())
+			ekle(kimlik, halk.nitelik.get(kimlik));
 		nicelik += halk.nicelik;
 	}
 	
