@@ -8,17 +8,17 @@ package başaşağıderebeyi.kuruluş.dünya;
 import başaşağıderebeyi.matematik.*;
 
 public class Karo {
-	public final Vektör2t konum;
+	public final Vektör2 konum;
 	public final int endeks;
 	public Arazi arazi;
 	
-	public Karo(Vektör2t konum, int endeks, Arazi arazi) {
+	public Karo(Vektör2 konum, int endeks, Arazi arazi) {
 		this.konum = konum;
 		this.endeks = endeks;
 		this.arazi = arazi;
 	}
 	
-	public Karo(Vektör2t konum, int endeks) {
+	public Karo(Vektör2 konum, int endeks) {
 		this(konum, endeks, null);
 	}
 }

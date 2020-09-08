@@ -8,27 +8,23 @@ package başaşağıderebeyi.kuruluş.dünya;
 import başaşağıderebeyi.matematik.*;
 
 public class Dünya {
-	public final Vektör2t boyut;
+	public final Vektör2 boyut;
 	public final Karo[] karolar;
 	
-	public Dünya(Vektör2t boyut) {
+	public Dünya(Vektör2 boyut) {
 		this.boyut = boyut;
-		this.karolar = new Karo[boyut.x * boyut.y];
-		int endeks = 0;
-		for (int y = 0; y < boyut.y; y++)
-			for (int x = 0; x < boyut.x; x++)
-				karolar[endeks] = new Karo(new Vektör2t(x, y), endeks++);
+		this.karolar = new Karo[(int)(boyut.x * boyut.y)];
 	}
 	
 	public int endeks(int x, int y) {
-		return x + y * boyut.x;
+		return x + y * (int)boyut.x;
 	}
 	
-	public int endeks(Vektör2t konum) {
-		return endeks(konum.x, konum.y);
+	public int endeks(Vektör2 konum) {
+		return endeks((int)konum.x, (int)konum.x);
 	}
 	
-	public Vektör2t konum(int endeks) {
+	public Vektör2 konum(int endeks) {
 		return karolar[endeks].konum;
 	}
 }
