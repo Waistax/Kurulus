@@ -6,11 +6,12 @@
 package başaşağıderebeyi.kuruluş;
 
 import başaşağıderebeyi.kuruluş.halk.*;
+import başaşağıderebeyi.kuruluş.nicelik.*;
 import başaşağıderebeyi.kuruluş.yapı.*;
 
 import java.util.*;
 
-public class Ulus {
+public class Ulus extends Değiştirilebilir {
 	public final List<Kimlik> birincilKimlikler;
 	public final List<Yapı> yapılar;
 	public String ad;
@@ -21,6 +22,7 @@ public class Ulus {
 		birincilKimlikler = new ArrayList<>();
 		yapılar = new ArrayList<>();
 		this.ad = ad;
+		halk = new Halk();
 	}
 	
 	public void başkentiDeğiştir(Yapı başkent) {

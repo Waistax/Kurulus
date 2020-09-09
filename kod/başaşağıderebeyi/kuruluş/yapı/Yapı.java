@@ -5,30 +5,29 @@
  */
 package başaşağıderebeyi.kuruluş.yapı;
 
+import başaşağıderebeyi.kuruluş.*;
 import başaşağıderebeyi.kuruluş.dünya.*;
+import başaşağıderebeyi.kuruluş.nicelik.*;
 
 public class Yapı {
 	public final Karo karo;
-	public YapıTürü tür;
-	
-	public Yapı(Karo karo, YapıTürü tür) {
+	public final Değiştirici[] değiştiricler;
+
+	public Yapı(Karo karo, Değiştirici... değiştiriciler) {
 		this.karo = karo;
-		this.tür = tür;
+		this.değiştiricler = değiştiriciler;
 	}
 	
-	public Yapı(Karo karo) {
-		this(karo, null);
+	public void gün() {
 	}
 	
-	public void kare() {
-		tür.kare(this);
+	public void yapıldığında(Ulus sahip) {
+		for (Değiştirici değiştirici : değiştiricler)
+			sahip.ekle(değiştirici);
 	}
 	
-	public void yapıldığında() {
-		tür.yapıldığında(this);
-	}
-	
-	public void yıkıldığında() {
-		tür.yıkıldığında(this);
+	public void yıkıldığında(Ulus sahip) {
+		for (Değiştirici değiştirici : değiştiricler)
+			sahip.çıkar(değiştirici);
 	}
 }

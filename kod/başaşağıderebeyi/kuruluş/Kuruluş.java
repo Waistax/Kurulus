@@ -7,6 +7,7 @@ package başaşağıderebeyi.kuruluş;
 
 import başaşağıderebeyi.awtkütüphanesi.*;
 import başaşağıderebeyi.kuruluş.dünya.*;
+import başaşağıderebeyi.kuruluş.nicelik.*;
 import başaşağıderebeyi.kütük.*;
 import başaşağıderebeyi.matematik.*;
 import başaşağıderebeyi.motor.*;
@@ -17,7 +18,7 @@ import java.text.*;
 import java.util.concurrent.*;
 
 public class Kuruluş implements Uygulama {
-	public static final String SÜRÜM = "0.5";
+	public static final String SÜRÜM = "0.6";
 	public static final Kütük KÜTÜK = new Kütük();
 	public static final Kuruluş KURULUŞ = new Kuruluş();
 	public static final AWTGörselleştirici GÖRSELLEŞTİRİCİ = new AWTGörselleştirici();
@@ -39,6 +40,10 @@ public class Kuruluş implements Uygulama {
 	public static final Font OLUŞTURUCU_YÜZDESİ_YAZI_TİPİ = new Font("Consolas", Font.PLAIN, 20);
 	public static final DecimalFormat OLUŞTURUCU_KİMLİĞİ_ŞEKLİ = new DecimalFormat("00");
 	public static final DecimalFormat OLUŞTURUCU_YÜZDESİ_ŞEKLİ = new DecimalFormat(": %000.000");
+	
+	public static final Color OYUN_İÇİ_YAZI_RENGİ = new Color(1.0F, 1.0F, 0.6F, 1.0F);
+	public static final Color OYUN_İÇİ_ARKAPLAN_RENGİ = new Color(0.0F, 0.0F, 0.0F, 0.7F);
+	public static final Font OYUN_İÇİ_YAZI_TİPİ = new Font("Consolas", Font.PLAIN, 20);
 	
 	public static final Vektör2 SIFIR_VEKTÖR = new Vektör2();
 	
@@ -103,6 +108,11 @@ public class Kuruluş implements Uygulama {
 		};
 		for (int i = 0; i < araziler.length; i++)
 			KÜTÜK.bağla("kuruluş:arazi_" + i, araziler[i]);
+		final Nitelik[] nitelikler = new Nitelik[] {
+			new Nitelik("moral")	
+		};
+		for (Nitelik nitelik : nitelikler)
+			KÜTÜK.bağla("kuruluş:nitelik_" + nitelik.ad, nitelik);
 		oluşturmaBaşlangıcı = Motor.zaman();
 		dünya = new Dünya(new Vektör2(1000.0F, 1000.0F));
 		oluşturucular = new DünyaOluşturucu[12];
@@ -112,6 +122,11 @@ public class Kuruluş implements Uygulama {
 			işlemler.execute(oluşturucular[i]);
 		}
 		harita = new Harita(dünya);
+		final Ulus TC = new Ulus("Türkiye Cumhuriyeti");
+		harita.uluslar.add(TC);
+		TC.oluştur(nitelikler[0]);
+		TC.ekle(new Değiştirici("Milli Mücadele", nitelikler[0], true, 1.0F, -1));
+		TC.ekle(new Değiştirici("Milli Mücadele", nitelikler[0], false, 0.20F, -1));
 		kamera = new Vektör2();
 		yakınlaştırma = YAKINLAŞTIRMA_BAŞLANGIÇ_DEĞERİ;
 		boyutuHesapla();
@@ -143,25 +158,28 @@ public class Kuruluş implements Uygulama {
 				haritaOluşturuldu = true;
 			çizer.setFont(OLUŞTURUCU_YÜZDESİ_YAZI_TİPİ);
 			final FontMetrics ölçü = çizer.getFontMetrics();
+			final int yükseklik = ölçü.getHeight();
 			int y = 70;
 			çizer.drawString("(" + (int)dünya.boyut.x + "x" + (int)dünya.boyut.y + ") " + (dünya.karolar.length / 1000000.0F) + "m karo oluşturuluyor...", 10, y);
-			çizer.drawString("Geçen süre " + (Motor.zaman() - oluşturmaBaşlangıcı) / 1000000000.0F + "s.", 10, y += ölçü.getHeight());
+			çizer.drawString("Geçen süre " + (Motor.zaman() - oluşturmaBaşlangıcı) / 1000000000.0F + "s.", 10, y += yükseklik);
 			float toplamYüzde = 0.0F;
 			for (DünyaOluşturucu oluşturucu : oluşturucular) {
 				final float p = oluşturucu.yüzde;
 				final float q = 1.0F - p;
 				toplamYüzde += p;
 				çizer.setColor(new Color(0.4F * p + 1.0F * q, 1.0F * p + 0.4F * q, 0.4F));
-				çizer.drawString("Oluşturucu " + OLUŞTURUCU_KİMLİĞİ_ŞEKLİ.format(oluşturucu.kimlik) + OLUŞTURUCU_YÜZDESİ_ŞEKLİ.format(p), 10, y += ölçü.getHeight());
+				çizer.drawString("Oluşturucu " + OLUŞTURUCU_KİMLİĞİ_ŞEKLİ.format(oluşturucu.kimlik) + OLUŞTURUCU_YÜZDESİ_ŞEKLİ.format(p), 10, y += yükseklik);
 			}
 			final float p = toplamYüzde / oluşturucular.length;
 			final float q = 1.0F - p;
 			final int yatayAlan = (int)ekran.x - 20;
 			çizer.setColor(new Color(0.4F * p + 1.0F * q, 1.0F * p + 0.4F * q, 0.4F));
 			String toplamYüzdeYazısı = "Toplam " + OLUŞTURUCU_YÜZDESİ_ŞEKLİ.format(p);
-			çizer.fillRect(10, y += ölçü.getHeight(), (int)Math.round(yatayAlan * p), ölçü.getHeight());
+			çizer.fillRect(10, y += yükseklik, Math.round(yatayAlan * p), yükseklik);
 			çizer.setColor(tersRengi(çizer.getColor()));
-			çizer.drawString(toplamYüzdeYazısı, (yatayAlan - ölçü.stringWidth(toplamYüzdeYazısı)) / 2, y += ölçü.getAscent());
+			çizer.drawRect(10, y, yatayAlan, yükseklik);
+			y += yükseklik - ölçü.getDescent();
+			çizer.drawString(toplamYüzdeYazısı, (yatayAlan - ölçü.stringWidth(toplamYüzdeYazısı)) / 2, y);
 		} else {
 			if (GİRDİ.kaydırma != 0) {
 				yakınlaştırma = sıkıştır(yakınlaştırma + GİRDİ.kaydırma, YAKINLAŞTIRMA_EN_DÜŞÜK_DEĞERİ, YAKINLAŞTIRMA_EN_YÜKSEK_DEĞERİ);
@@ -215,18 +233,39 @@ public class Kuruluş implements Uygulama {
 				çizer.drawRect((int)pikselKonumuTamponu.x, (int)pikselKonumuTamponu.y, karoBoyutu, karoBoyutu);
 			}
 			çizer.setStroke(çizgi);
+			çizer.setFont(OYUN_İÇİ_YAZI_TİPİ);
+			çizer.setColor(OYUN_İÇİ_YAZI_RENGİ);
+			final String[] moralYazıları = new String[harita.uluslar.size()];
+			for (int i = 0; i < moralYazıları.length; i++) {
+				final Ulus ulus = harita.uluslar.get(i);
+				moralYazıları[i] = ulus.ad + " Moral: " + ulus.değer(KÜTÜK.ara("kuruluş:nitelik_moral", Nitelik.class));
+			}
+			yazıYaz(10, 30, OYUN_İÇİ_ARKAPLAN_RENGİ, moralYazıları);
 		}
 		çizer.setFont(KARE_ORANI_SAYAÇ_YAZI_TİPİ);
-		final FontMetrics ölçü = çizer.getFontMetrics();
-		String kareOranıSayacı = "Kare Oranı: " + Motor.kareOranı;
-		çizer.setColor(KARE_ORANI_ARKAPLAN_RENGİ);
-		çizer.fillRect(8, 10, ölçü.stringWidth(kareOranıSayacı) + 4, 14);
 		çizer.setColor(KARE_ORANI_SAYAÇ_RENGİ);
-		çizer.drawString(kareOranıSayacı, 10, 22);
+		yazıYaz(10, 10, KARE_ORANI_ARKAPLAN_RENGİ, "Kare Oranı: " + Motor.kareOranı);
 	}
 	
 	@Override
 	public void saniye() {
+	}
+	
+	public void yazıYaz(final int x, int y, final Color arkaplan, final String... yazılar) {
+		final FontMetrics ölçü = çizer.getFontMetrics();
+		final int yükseklik = ölçü.getHeight();
+		final int arkaplanFazlası = Math.round(yükseklik * 0.1F);
+		final Color renk = çizer.getColor();
+		for (final String yazı : yazılar) {
+			if (arkaplan != null) {
+				final int yazıGenişliği = ölçü.stringWidth(yazı);
+				çizer.setColor(arkaplan);
+				çizer.fillRect(x - arkaplanFazlası, y, yazıGenişliği + arkaplanFazlası * 2, yükseklik);
+				çizer.setColor(renk);
+			}
+			y += yükseklik;
+			çizer.drawString(yazı, x, y - ölçü.getDescent());
+		}
 	}
 	
 	public void boyutuHesapla() {
