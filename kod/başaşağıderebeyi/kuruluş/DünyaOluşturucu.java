@@ -1,6 +1,6 @@
 /**
  * başaşağıderebeyi.kuruluş.DünyaOluşturucu.java
- * 0.4 / 8 Eyl 2020 / 11:54:05
+ * 0.5 / 8 Eyl 2020 / 11:54:05
  * Cem GEÇGEL (BaşAşağıDerebeyi)
  */
 package başaşağıderebeyi.kuruluş;

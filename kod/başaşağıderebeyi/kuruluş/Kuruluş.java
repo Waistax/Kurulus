@@ -17,7 +17,7 @@ import java.text.*;
 import java.util.concurrent.*;
 
 public class Kuruluş implements Uygulama {
-	public static final String SÜRÜM = "0.4";
+	public static final String SÜRÜM = "0.5";
 	public static final Kütük KÜTÜK = new Kütük();
 	public static final Kuruluş KURULUŞ = new Kuruluş();
 	public static final AWTGörselleştirici GÖRSELLEŞTİRİCİ = new AWTGörselleştirici();
