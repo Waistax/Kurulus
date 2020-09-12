@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Nicelik {
 	public final Nitelik nitelik;
-	public final List<Değiştirici> değiştiriciler;
+	public final List<DeğiştiriciParçası> değiştiriciler;
 	
 	public float temel;
 	public float kat;
@@ -26,7 +26,7 @@ public class Nicelik {
 		if (kirli) {
 			temel = 0.0F;
 			kat = 1.0F;
-			for (Değiştirici değiştirici : değiştiriciler)
+			for (DeğiştiriciParçası değiştirici : değiştiriciler)
 				if (değiştirici.temel)
 					temel += değiştirici.değer;
 				else
@@ -37,7 +37,7 @@ public class Nicelik {
 		return değer;
 	}
 	
-	public void ekle(Değiştirici değiştirici) {
+	public void ekle(DeğiştiriciParçası değiştirici) {
 		değiştiriciler.add(değiştirici);
 		kirli = true;
 	}
@@ -47,7 +47,7 @@ public class Nicelik {
 		kirli = true;
 	}
 	
-	public void çıkar(Değiştirici değiştirici) {
+	public void çıkar(DeğiştiriciParçası değiştirici) {
 		çıkar(değiştiriciler.indexOf(değiştirici));
 	}
 	
@@ -56,11 +56,5 @@ public class Nicelik {
 		temel = 0.0F;
 		kat = 1.0F;
 		kirli = false;
-	}
-	
-	public void gün() {
-		for (int i = 0; i < değiştiriciler.size(); i++)
-			if (değiştiriciler.get(i).süre-- == 0)
-				çıkar(i--);
 	}
 }

@@ -5,18 +5,14 @@
  */
 package başaşağıderebeyi.kuruluş.nicelik;
 
+import java.util.*;
+
 public class Değiştirici {
 	public final String ad;
-	public final Nitelik nitelik;
-	public final boolean temel;
-	public float değer;
-	public int süre;
-
-	public Değiştirici(String ad, Nitelik nitelik, boolean temel, float değer, int süre) {
+	public final List<DeğiştiriciParçası> parçalar;
+	
+	public Değiştirici(String ad) {
 		this.ad = ad;
-		this.nitelik = nitelik;
-		this.temel = temel;
-		this.değer = değer;
-		this.süre = süre;
+		parçalar = new ArrayList<>();
 	}
 }

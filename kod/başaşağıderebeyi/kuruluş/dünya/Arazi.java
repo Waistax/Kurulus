@@ -9,8 +9,14 @@ import java.awt.*;
 
 public class Arazi {
 	public final Color renk;
+	public final float tarım;
+	public final float hız;
+	public final float savunma;
 	
-	public Arazi(Color renk) {
+	public Arazi(Color renk, float tarım, float hız, float savunma) {
 		this.renk = renk;
+		this.tarım = tarım;
+		this.hız = hız;
+		this.savunma = savunma;
 	}
 }

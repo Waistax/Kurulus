@@ -8,6 +8,7 @@ package başaşağıderebeyi.kuruluş;
 import başaşağıderebeyi.awtkütüphanesi.*;
 import başaşağıderebeyi.kuruluş.dünya.*;
 import başaşağıderebeyi.kuruluş.nicelik.*;
+import başaşağıderebeyi.kuruluş.yapı.*;
 import başaşağıderebeyi.kütük.*;
 import başaşağıderebeyi.matematik.*;
 import başaşağıderebeyi.motor.*;
@@ -18,7 +19,7 @@ import java.text.*;
 import java.util.concurrent.*;
 
 public class Kuruluş implements Uygulama {
-	public static final String SÜRÜM = "0.6";
+	public static final String SÜRÜM = "0.7";
 	public static final Kütük KÜTÜK = new Kütük();
 	public static final Kuruluş KURULUŞ = new Kuruluş();
 	public static final AWTGörselleştirici GÖRSELLEŞTİRİCİ = new AWTGörselleştirici();
@@ -54,6 +55,7 @@ public class Kuruluş implements Uygulama {
 		GÖRSELLEŞTİRİCİ.girdi = GİRDİ;
 		Motor.uygulama = KURULUŞ;
 		Motor.görselleştirici = GÖRSELLEŞTİRİCİ;
+		Motor.hedefKareOranı = 120.0F;
 		Motor.başla();
 	}
 	
@@ -81,52 +83,56 @@ public class Kuruluş implements Uygulama {
 	public Dikdörtgen2 ekranDörtgeni;
 	public Dikdörtgen2 pikselDörtgeni;
 	public Graphics2D çizer;
+	public int işlemSayısı;
 	public ExecutorService işlemler;
+	public UlusGüncelleyici[] güncelleyiciler;
 	public DünyaOluşturucu[] oluşturucular;
 	public boolean haritaOluşturuldu;
-	public boolean oluşturucularBitti;
 	public float oluşturmaBaşlangıcı;
 	
 	@Override
 	public void yükle() {
 		final Arazi[] araziler = new Arazi[] {
-			new Arazi(new Color(0.2F, 0.2F, 0.4F)),
-			new Arazi(new Color(0.4F, 0.4F, 0.7F)),
-			new Arazi(new Color(0.6F, 0.6F, 1.0F)),
-	
-			new Arazi(new Color(0.6F, 1.0F, 0.6F)),
-			new Arazi(new Color(0.4F, 0.7F, 0.4F)),
-			new Arazi(new Color(0.2F, 0.4F, 0.2F)),
-
-			new Arazi(new Color(1.0F, 1.0F, 0.6F)),
-			new Arazi(new Color(0.7F, 0.7F, 0.4F)),
-			new Arazi(new Color(0.4F, 0.4F, 0.2F)),
-
-			new Arazi(new Color(1.0F, 0.6F, 0.6F)),
-			new Arazi(new Color(0.7F, 0.4F, 0.4F)),
-			new Arazi(new Color(0.4F, 0.2F, 0.2F))
+			new Arazi(new Color(0.2F, 0.2F, 0.4F), 0.0F, 10.0F, 0.0F),
+			new Arazi(new Color(0.4F, 0.4F, 0.7F), 0.0F, 10.0F, 0.0F),
+			new Arazi(new Color(0.6F, 0.6F, 1.0F), 0.0F, 8.0F, 0.0F),
+			new Arazi(new Color(0.6F, 1.0F, 0.6F), 10.0F, 1.0F, 1.0F),
+			new Arazi(new Color(0.4F, 0.7F, 0.4F), 8.0F, 1.0F, 1.0F),
+			new Arazi(new Color(0.2F, 0.4F, 0.2F), 5.0F, 1.0F, 1.0F),
+			new Arazi(new Color(1.0F, 1.0F, 0.6F), 4.0F, 1.0F, 1.0F),
+			new Arazi(new Color(0.7F, 0.7F, 0.4F), 3.0F, 1.0F, 1.0F),
+			new Arazi(new Color(0.4F, 0.4F, 0.2F), 2.0F, 1.0F, 1.0F),
+			new Arazi(new Color(1.0F, 0.6F, 0.6F), 1.0F, 0.5F, 5.0F),
+			new Arazi(new Color(0.7F, 0.4F, 0.4F), 0.5F, 0.5F, 8.0F),
+			new Arazi(new Color(0.4F, 0.2F, 0.2F), 0.1F, 0.1F, 10.0F)
 		};
 		for (int i = 0; i < araziler.length; i++)
 			KÜTÜK.bağla("kuruluş:arazi_" + i, araziler[i]);
-		final Nitelik[] nitelikler = new Nitelik[] {
-			new Nitelik("moral")	
-		};
-		for (Nitelik nitelik : nitelikler)
-			KÜTÜK.bağla("kuruluş:nitelik_" + nitelik.ad, nitelik);
 		oluşturmaBaşlangıcı = Motor.zaman();
 		dünya = new Dünya(new Vektör2(1000.0F, 1000.0F));
-		oluşturucular = new DünyaOluşturucu[12];
-		işlemler = Executors.newFixedThreadPool(oluşturucular.length);
+		harita = new Harita(dünya);
+		final Nitelik[] nitelikler = new Nitelik[] {
+			new Nitelik("moral"),
+			new Nitelik("vergi_geliri"),
+			new Nitelik("yemek_üretimi")
+		};
+		for (Nitelik nitelik : nitelikler)
+			KÜTÜK.bağla("kuruluş:ulus_nitelik_" + nitelik.ad, nitelik);
+		final Ulus TC = harita.ulusEkle("Türkiye Cumhuriyeti");
+		final Değiştirici milliMücadele = new Değiştirici("Milli Mücadele");
+		milliMücadele.parçalar.add(new DeğiştiriciParçası(nitelikler[0], true, 1.0F));
+		milliMücadele.parçalar.add(new DeğiştiriciParçası(nitelikler[0], false, 0.2F));
+		TC.ekle(new SüreliDeğiştirici(milliMücadele, 900));
+		işlemSayısı = 12;
+		işlemler = Executors.newFixedThreadPool(işlemSayısı);
+		güncelleyiciler = new UlusGüncelleyici[işlemSayısı];
+		for (int i = 0; i < güncelleyiciler.length; i++)
+			güncelleyiciler[i] = new UlusGüncelleyici(harita.uluslar, i, güncelleyiciler.length);
+		oluşturucular = new DünyaOluşturucu[işlemSayısı];
 		for (int i = 0; i < oluşturucular.length; i++) {
 			oluşturucular[i] = new DünyaOluşturucu(dünya, araziler, i, (int)dünya.boyut.y * i / oluşturucular.length, (int)dünya.boyut.y * (i + 1) / oluşturucular.length);
 			işlemler.execute(oluşturucular[i]);
 		}
-		harita = new Harita(dünya);
-		final Ulus TC = new Ulus("Türkiye Cumhuriyeti");
-		harita.uluslar.add(TC);
-		TC.oluştur(nitelikler[0]);
-		TC.ekle(new Değiştirici("Milli Mücadele", nitelikler[0], true, 1.0F, -1));
-		TC.ekle(new Değiştirici("Milli Mücadele", nitelikler[0], false, 0.20F, -1));
 		kamera = new Vektör2();
 		yakınlaştırma = YAKINLAŞTIRMA_BAŞLANGIÇ_DEĞERİ;
 		boyutuHesapla();
@@ -144,18 +150,11 @@ public class Kuruluş implements Uygulama {
 	@Override
 	public void kare() {
 		if (!haritaOluşturuldu) {
-			if (!oluşturucularBitti) {
-				boolean bitmemişOluşturucuVar = false;
-				for (DünyaOluşturucu oluşturucu : oluşturucular)
-					if (!oluşturucu.bitti)
-						bitmemişOluşturucuVar = true;
-				if (!bitmemişOluşturucuVar) {
-					işlemler.shutdown();
-					oluşturucularBitti = true;
-				}
-			}
-			if (işlemler.isShutdown())
-				haritaOluşturuldu = true;
+			boolean bitmemişOluşturucuVar = false;
+			for (DünyaOluşturucu oluşturucu : oluşturucular)
+				if (!oluşturucu.bitti)
+					bitmemişOluşturucuVar = true;
+			haritaOluşturuldu = !bitmemişOluşturucuVar;
 			çizer.setFont(OLUŞTURUCU_YÜZDESİ_YAZI_TİPİ);
 			final FontMetrics ölçü = çizer.getFontMetrics();
 			final int yükseklik = ölçü.getHeight();
@@ -181,6 +180,13 @@ public class Kuruluş implements Uygulama {
 			y += yükseklik - ölçü.getDescent();
 			çizer.drawString(toplamYüzdeYazısı, (yatayAlan - ölçü.stringWidth(toplamYüzdeYazısı)) / 2, y);
 		} else {
+			boolean güncelliyor = false;
+			for (UlusGüncelleyici güncelleyici : güncelleyiciler)
+				if (güncelleyici.çalışıyor)
+					güncelliyor = true;
+			if (!güncelliyor)
+				for (UlusGüncelleyici güncelleyici : güncelleyiciler)
+					işlemler.execute(güncelleyici);
 			if (GİRDİ.kaydırma != 0) {
 				yakınlaştırma = sıkıştır(yakınlaştırma + GİRDİ.kaydırma, YAKINLAŞTIRMA_EN_DÜŞÜK_DEĞERİ, YAKINLAŞTIRMA_EN_YÜKSEK_DEĞERİ);
 				final Vektör2 imleçHaritaEski = harita(GİRDİ.imleç, new Vektör2());
@@ -227,6 +233,12 @@ public class Kuruluş implements Uygulama {
 				çizer.drawLine((int)pikselDörtgeni.k.x, (int)pikselKonumuTamponu.y, (int)pikselDörtgeni.b.x, (int)pikselKonumuTamponu.y);
 			}
 			if (üzerindeDurulanYerSınırlarınİçerisinde) {
+				if (GİRDİ.düğmeBasıldı[MouseEvent.BUTTON1]) {
+					Ulus TC = harita.uluslar.get(0);
+					Yapı şehir = new Yapı(dünya.karolar[dünya.endeks(üzerindeDurulanYer)], new DeğiştiriciParçası(KÜTÜK.ara("kuruluş:ulus_nitelik_vergi_geliri", Nitelik.class), true, 1.0F));
+					TC.yapılar.add(şehir);
+					şehir.yapıldığında(TC);
+				}
 				piksel(üzerindeDurulanYer, pikselKonumuTamponu);
 				çizer.setColor(ÜSTÜNDE_DURMA_RENGİ);
 				çizer.setStroke(ÜSTÜNDE_DURMA_ÇİZGİSİ);
@@ -238,13 +250,15 @@ public class Kuruluş implements Uygulama {
 			final String[] moralYazıları = new String[harita.uluslar.size()];
 			for (int i = 0; i < moralYazıları.length; i++) {
 				final Ulus ulus = harita.uluslar.get(i);
-				moralYazıları[i] = ulus.ad + " Moral: " + ulus.değer(KÜTÜK.ara("kuruluş:nitelik_moral", Nitelik.class));
+				moralYazıları[i] = ulus.ad + " Moral: " + ulus.değer(KÜTÜK.ara("kuruluş:ulus_nitelik_moral", Nitelik.class)) + " Vergi Geliri: " + ulus.değer(KÜTÜK.ara("kuruluş:ulus_nitelik_vergi_geliri", Nitelik.class));
 			}
-			yazıYaz(10, 30, OYUN_İÇİ_ARKAPLAN_RENGİ, moralYazıları);
+			yazıYaz(10, 50, OYUN_İÇİ_ARKAPLAN_RENGİ, moralYazıları);
 		}
 		çizer.setFont(KARE_ORANI_SAYAÇ_YAZI_TİPİ);
 		çizer.setColor(KARE_ORANI_SAYAÇ_RENGİ);
-		yazıYaz(10, 10, KARE_ORANI_ARKAPLAN_RENGİ, "Kare Oranı: " + Motor.kareOranı);
+		yazıYaz(10, 10, KARE_ORANI_ARKAPLAN_RENGİ,
+				"Kare Oranı: " + Motor.kareOranı,
+				"Bellek: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024.0F / 1024.0F + "/" + Runtime.getRuntime().totalMemory() / 1024.0F / 1024.0F + " MB");
 	}
 	
 	@Override

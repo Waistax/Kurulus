@@ -11,23 +11,24 @@ import başaşağıderebeyi.kuruluş.nicelik.*;
 
 public class Yapı {
 	public final Karo karo;
-	public final Değiştirici[] değiştiricler;
+	public final SüreliDeğiştirici değiştirici;
 
-	public Yapı(Karo karo, Değiştirici... değiştiriciler) {
+	public Yapı(Karo karo, DeğiştiriciParçası... parçalar) {
 		this.karo = karo;
-		this.değiştiricler = değiştiriciler;
+		Değiştirici değiştirici = new Değiştirici("yapı");
+		for (DeğiştiriciParçası parça : parçalar)
+			değiştirici.parçalar.add(parça);
+		this.değiştirici = new SüreliDeğiştirici(değiştirici);
 	}
 	
 	public void gün() {
 	}
 	
 	public void yapıldığında(Ulus sahip) {
-		for (Değiştirici değiştirici : değiştiricler)
-			sahip.ekle(değiştirici);
+		sahip.ekle(değiştirici);
 	}
 	
 	public void yıkıldığında(Ulus sahip) {
-		for (Değiştirici değiştirici : değiştiricler)
-			sahip.çıkar(değiştirici);
+		sahip.çıkar(değiştirici);
 	}
 }

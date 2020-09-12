@@ -5,6 +5,7 @@
  */
 package başaşağıderebeyi.kuruluş;
 
+import başaşağıderebeyi.kuruluş.dünya.*;
 import başaşağıderebeyi.kuruluş.halk.*;
 import başaşağıderebeyi.kuruluş.nicelik.*;
 import başaşağıderebeyi.kuruluş.yapı.*;
@@ -14,6 +15,7 @@ import java.util.*;
 public class Ulus extends Değiştirilebilir {
 	public final List<Kimlik> birincilKimlikler;
 	public final List<Yapı> yapılar;
+	public final List<Karo> toprak;
 	public String ad;
 	public Halk halk;
 	public Yapı başkent;
@@ -21,11 +23,15 @@ public class Ulus extends Değiştirilebilir {
 	public Ulus(String ad) {
 		birincilKimlikler = new ArrayList<>();
 		yapılar = new ArrayList<>();
+		toprak = new ArrayList<>();
 		this.ad = ad;
 		halk = new Halk();
 	}
 	
 	public void başkentiDeğiştir(Yapı başkent) {
 		this.başkent = başkent;
+	}
+	
+	public void gün() {
 	}
 }

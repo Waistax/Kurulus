@@ -26,12 +26,30 @@ public class Değiştirilebilir {
 		return nicelikler.get(nitelik).değer();
 	}
 	
-	public void ekle(Değiştirici değiştirici) {
+	private void ekle(DeğiştiriciParçası değiştirici) {
 		nicelikler.get(değiştirici.nitelik).ekle(değiştirici);
 	}
 	
-	public void çıkar(Değiştirici değiştirici) {
+	private void ekle(Değiştirici değiştirici) {
+		for (DeğiştiriciParçası değiştiriciParçası : değiştirici.parçalar)
+			ekle(değiştiriciParçası);
+	}
+	
+	public void ekle(SüreliDeğiştirici süreliDeğiştirici) {
+		ekle(süreliDeğiştirici.değiştirici);
+	}
+	
+	private void çıkar(DeğiştiriciParçası değiştirici) {
 		nicelikler.get(değiştirici.nitelik).çıkar(değiştirici);
+	}
+	
+	private void çıkar(Değiştirici değiştirici) {
+		for (DeğiştiriciParçası değiştiriciParçası : değiştirici.parçalar)
+			çıkar(değiştiriciParçası);
+	}
+	
+	public void çıkar(SüreliDeğiştirici değiştirici) {
+		çıkar(değiştirici.değiştirici);
 	}
 	
 	public void temizle(Nitelik nitelik) {
@@ -41,10 +59,5 @@ public class Değiştirilebilir {
 	public void temizle() {
 		for (Nicelik nicelik : nicelikler.values())
 			nicelik.temizle();
-	}
-	
-	public void gün() {
-		for (Nicelik nicelik : nicelikler.values())
-			nicelik.gün();
 	}
 }
