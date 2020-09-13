@@ -9,6 +9,7 @@ import java.util.*;
 
 public class Nicelik {
 	public final Nitelik nitelik;
+	public final Nicelik üstü;
 	public final List<DeğiştiriciParçası> değiştiriciler;
 	
 	public float temel;
@@ -16,45 +17,57 @@ public class Nicelik {
 	public float değer;
 	public boolean kirli;
 	
-	public Nicelik(Nitelik nitelik) {
+	public Nicelik(Nitelik nitelik, Nicelik üstü) {
 		this.nitelik = nitelik;
+		this.üstü = üstü;
 		değiştiriciler = new ArrayList<>();
 		kat = 1.0F;
+	}
+	
+	public Nicelik(Nitelik nitelik) {
+		this(nitelik, null);
+	}
+	
+	private Nicelik hesapla(DeğiştiriciParçası değiştirici) {
+		if (değiştirici.temel)
+			temel += değiştirici.değer;
+		else
+			kat += değiştirici.değer;
+		return this;
 	}
 	
 	public float değer() {
 		if (kirli) {
 			temel = 0.0F;
 			kat = 1.0F;
+			if (üstü != null)
+				for (DeğiştiriciParçası değiştirici : üstü.değiştiriciler)
+					hesapla(değiştirici);
 			for (DeğiştiriciParçası değiştirici : değiştiriciler)
-				if (değiştirici.temel)
-					temel += değiştirici.değer;
-				else
-					kat += değiştirici.değer;
+				hesapla(değiştirici);
 			değer = temel * kat;
 			kirli = false;
 		}
 		return değer;
 	}
 	
-	public void ekle(DeğiştiriciParçası değiştirici) {
+	public Nicelik ekle(DeğiştiriciParçası değiştirici) {
 		değiştiriciler.add(değiştirici);
 		kirli = true;
+		return this;
 	}
 	
-	public void çıkar(int endeks) {
-		değiştiriciler.remove(endeks);
+	public Nicelik çıkar(DeğiştiriciParçası değiştirici) {
+		değiştiriciler.remove(değiştirici);
 		kirli = true;
+		return this;
 	}
 	
-	public void çıkar(DeğiştiriciParçası değiştirici) {
-		çıkar(değiştiriciler.indexOf(değiştirici));
-	}
-	
-	public void temizle() {
+	public Nicelik temizle() {
 		değiştiriciler.clear();
 		temel = 0.0F;
 		kat = 1.0F;
 		kirli = false;
+		return this;
 	}
 }

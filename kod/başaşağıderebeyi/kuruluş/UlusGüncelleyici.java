@@ -5,17 +5,19 @@
  */
 package başaşağıderebeyi.kuruluş;
 
+import başaşağıderebeyi.kuruluş.nesne.*;
+
 import java.util.*;
 
 public class UlusGüncelleyici implements Runnable {
-	public final List<Ulus> uluslar;
+	public final List<Nesne> nesneler;
 	public final int kimlik;
 	public final int sayı;
 	
 	public boolean çalışıyor;
 	
-	public UlusGüncelleyici(List<Ulus> uluslar, int kimlik, int sayı) {
-		this.uluslar = uluslar;
+	public UlusGüncelleyici(List<Nesne> nesneler, int kimlik, int sayı) {
+		this.nesneler = nesneler;
 		this.kimlik = kimlik;
 		this.sayı = sayı;
 	}
@@ -23,9 +25,12 @@ public class UlusGüncelleyici implements Runnable {
 	@Override
 	public void run() {
 		çalışıyor = true;
-		final int bitiş = uluslar.size() * (kimlik + 1) / sayı;
-		for (int i = uluslar.size() * kimlik / sayı; i < bitiş; i++)
-			uluslar.get(i).gün();
+		final int bitiş = nesneler.size() * (kimlik + 1) / sayı;
+		for (int i = nesneler.size() * kimlik / sayı; i < bitiş; i++) {
+			Nesne nesne = nesneler.get(i);
+			if (nesne instanceof Ulus)
+				((Ulus)nesne).gün();
+		}
 		çalışıyor = false;
 	}
 }

@@ -7,28 +7,30 @@ package başaşağıderebeyi.kuruluş.yapı;
 
 import başaşağıderebeyi.kuruluş.*;
 import başaşağıderebeyi.kuruluş.dünya.*;
+import başaşağıderebeyi.kuruluş.nesne.*;
 import başaşağıderebeyi.kuruluş.nicelik.*;
 
-public class Yapı {
-	public final Karo karo;
-	public final SüreliDeğiştirici değiştirici;
+import java.awt.image.*;
+import java.io.*;
 
-	public Yapı(Karo karo, DeğiştiriciParçası... parçalar) {
-		this.karo = karo;
+import javax.imageio.*;
+
+public class Yapı extends Nesne {
+	public Yapı(Ulus ulus, Karo karo, DeğiştiriciParçası... parçalar) {
 		Değiştirici değiştirici = new Değiştirici("yapı");
 		for (DeğiştiriciParçası parça : parçalar)
 			değiştirici.parçalar.add(parça);
-		this.değiştirici = new SüreliDeğiştirici(değiştirici);
-	}
-	
-	public void gün() {
-	}
-	
-	public void yapıldığında(Ulus sahip) {
-		sahip.ekle(değiştirici);
-	}
-	
-	public void yıkıldığında(Ulus sahip) {
-		sahip.çıkar(değiştirici);
+		Konum konum = new Konum();
+		konum.konum.yaz(karo.konum);
+		bileşeniEkle(konum);
+		bileşeniEkle(new Değiştirme(ulus.bileşenAl(Değiştirilebilir.class), değiştirici));
+		try {
+			BufferedImage resim = ImageIO.read(new File("kay/şehir_i.png"));
+			Görsel görsel = new Görsel();
+			görsel.resim = resim;
+			bileşeniEkle(görsel);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

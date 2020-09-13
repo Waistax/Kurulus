@@ -7,7 +7,7 @@ package başaşağıderebeyi.kuruluş.nicelik;
 
 public class Nitelik {
 	public final String ad;
-
+	
 	public Nitelik(String ad) {
 		this.ad = ad;
 	}

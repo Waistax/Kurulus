@@ -21,7 +21,7 @@ public class Dünya {
 	}
 	
 	public int endeks(Vektör2 konum) {
-		return endeks((int)konum.x, (int)konum.x);
+		return endeks((int)konum.x, (int)konum.y);
 	}
 	
 	public Vektör2 konum(int endeks) {

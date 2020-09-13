@@ -7,12 +7,14 @@ package başaşağıderebeyi.kuruluş;
 
 import başaşağıderebeyi.kuruluş.dünya.*;
 import başaşağıderebeyi.kuruluş.halk.*;
+import başaşağıderebeyi.kuruluş.nesne.*;
 import başaşağıderebeyi.kuruluş.nicelik.*;
 import başaşağıderebeyi.kuruluş.yapı.*;
+import başaşağıderebeyi.kütük.*;
 
 import java.util.*;
 
-public class Ulus extends Değiştirilebilir {
+public class Ulus extends Nesne {
 	public final List<Kimlik> birincilKimlikler;
 	public final List<Yapı> yapılar;
 	public final List<Karo> toprak;
@@ -26,6 +28,12 @@ public class Ulus extends Değiştirilebilir {
 		toprak = new ArrayList<>();
 		this.ad = ad;
 		halk = new Halk();
+		Değiştirilebilir değiştirilebilir = new Değiştirilebilir();
+		bileşeniEkle(değiştirilebilir);
+		Map<Tanımlayıcı, Nitelik> nitelikler = Kuruluş.KÜTÜK.haritaAl(Nitelik.class);
+		for (Tanımlayıcı tanımlayıcı : nitelikler.keySet())
+			if (tanımlayıcı.ad.startsWith("ulus_nitelik_"))
+				değiştirilebilir.nicelikEkle(new Nicelik(nitelikler.get(tanımlayıcı)));
 	}
 	
 	public void başkentiDeğiştir(Yapı başkent) {
@@ -33,5 +41,6 @@ public class Ulus extends Değiştirilebilir {
 	}
 	
 	public void gün() {
+		bileşenAl(Değiştirilebilir.class).gün();
 	}
 }

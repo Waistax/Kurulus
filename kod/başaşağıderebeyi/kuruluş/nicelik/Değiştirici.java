@@ -15,4 +15,13 @@ public class Değiştirici {
 		this.ad = ad;
 		parçalar = new ArrayList<>();
 	}
+	
+	public Değiştirici parçaEkle(DeğiştiriciParçası parça) {
+		parçalar.add(parça);
+		return this;
+	}
+	
+	public Değiştirici parçaEkle(Nitelik nitelik, boolean temel, float değer) {
+		return parçaEkle(new DeğiştiriciParçası(nitelik, temel, değer));
+	}
 }

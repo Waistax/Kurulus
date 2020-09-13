@@ -7,6 +7,7 @@ package başaşağıderebeyi.kuruluş;
 
 import başaşağıderebeyi.awtkütüphanesi.*;
 import başaşağıderebeyi.kuruluş.dünya.*;
+import başaşağıderebeyi.kuruluş.nesne.*;
 import başaşağıderebeyi.kuruluş.nicelik.*;
 import başaşağıderebeyi.kuruluş.yapı.*;
 import başaşağıderebeyi.kütük.*;
@@ -16,10 +17,12 @@ import başaşağıderebeyi.motor.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class Kuruluş implements Uygulama {
-	public static final String SÜRÜM = "0.7";
+	public static final String SÜRÜM = "0.8";
 	public static final Kütük KÜTÜK = new Kütük();
 	public static final Kuruluş KURULUŞ = new Kuruluş();
 	public static final AWTGörselleştirici GÖRSELLEŞTİRİCİ = new AWTGörselleştirici();
@@ -118,16 +121,17 @@ public class Kuruluş implements Uygulama {
 		};
 		for (Nitelik nitelik : nitelikler)
 			KÜTÜK.bağla("kuruluş:ulus_nitelik_" + nitelik.ad, nitelik);
-		final Ulus TC = harita.ulusEkle("Türkiye Cumhuriyeti");
+		final Ulus TC = new Ulus("Türkiye Cumhuriyeti");
+		harita.nesneEkle(TC);
 		final Değiştirici milliMücadele = new Değiştirici("Milli Mücadele");
 		milliMücadele.parçalar.add(new DeğiştiriciParçası(nitelikler[0], true, 1.0F));
 		milliMücadele.parçalar.add(new DeğiştiriciParçası(nitelikler[0], false, 0.2F));
-		TC.ekle(new SüreliDeğiştirici(milliMücadele, 900));
+		TC.bileşenAl(Değiştirilebilir.class).ekle(new SüreliDeğiştirici(milliMücadele, 900));
 		işlemSayısı = 12;
 		işlemler = Executors.newFixedThreadPool(işlemSayısı);
 		güncelleyiciler = new UlusGüncelleyici[işlemSayısı];
 		for (int i = 0; i < güncelleyiciler.length; i++)
-			güncelleyiciler[i] = new UlusGüncelleyici(harita.uluslar, i, güncelleyiciler.length);
+			güncelleyiciler[i] = new UlusGüncelleyici(harita.nesneler, i, güncelleyiciler.length);
 		oluşturucular = new DünyaOluşturucu[işlemSayısı];
 		for (int i = 0; i < oluşturucular.length; i++) {
 			oluşturucular[i] = new DünyaOluşturucu(dünya, araziler, i, (int)dünya.boyut.y * i / oluşturucular.length, (int)dünya.boyut.y * (i + 1) / oluşturucular.length);
@@ -218,6 +222,12 @@ public class Kuruluş implements Uygulama {
 					çizer.setColor(karo.arazi.renk);
 					çizer.fillRect((int)pikselKonumuTamponu.x, (int)pikselKonumuTamponu.y, karoBoyutu, karoBoyutu);
 				}
+			for (Nesne nesne : harita.nesneler) {
+				Görsel görsel = nesne.bileşenAl(Görsel.class);
+				if (görsel != null) {
+					görsel.çiz();
+				}
+			}
 			final Stroke çizgi = çizer.getStroke();
 			çizer.setColor(SINIR_RENGİ);
 			çizer.setStroke(SINIR_ÇİZGİSİ);
@@ -234,10 +244,11 @@ public class Kuruluş implements Uygulama {
 			}
 			if (üzerindeDurulanYerSınırlarınİçerisinde) {
 				if (GİRDİ.düğmeBasıldı[MouseEvent.BUTTON1]) {
-					Ulus TC = harita.uluslar.get(0);
-					Yapı şehir = new Yapı(dünya.karolar[dünya.endeks(üzerindeDurulanYer)], new DeğiştiriciParçası(KÜTÜK.ara("kuruluş:ulus_nitelik_vergi_geliri", Nitelik.class), true, 1.0F));
+					Ulus TC = (Ulus)harita.nesneler.get(0);
+					Karo karo = dünya.karolar[dünya.endeks(üzerindeDurulanYer)];
+					Yapı şehir = new Yapı(TC, karo, new DeğiştiriciParçası(KÜTÜK.ara("kuruluş:ulus_nitelik_vergi_geliri", Nitelik.class), true, 1.0F));
 					TC.yapılar.add(şehir);
-					şehir.yapıldığında(TC);
+					harita.nesneEkle(şehir);
 				}
 				piksel(üzerindeDurulanYer, pikselKonumuTamponu);
 				çizer.setColor(ÜSTÜNDE_DURMA_RENGİ);
@@ -247,12 +258,16 @@ public class Kuruluş implements Uygulama {
 			çizer.setStroke(çizgi);
 			çizer.setFont(OYUN_İÇİ_YAZI_TİPİ);
 			çizer.setColor(OYUN_İÇİ_YAZI_RENGİ);
-			final String[] moralYazıları = new String[harita.uluslar.size()];
-			for (int i = 0; i < moralYazıları.length; i++) {
-				final Ulus ulus = harita.uluslar.get(i);
-				moralYazıları[i] = ulus.ad + " Moral: " + ulus.değer(KÜTÜK.ara("kuruluş:ulus_nitelik_moral", Nitelik.class)) + " Vergi Geliri: " + ulus.değer(KÜTÜK.ara("kuruluş:ulus_nitelik_vergi_geliri", Nitelik.class));
+			final Değiştirilebilir TCdeğiştirilebilir = harita.nesneler.get(0).bileşenAl(Değiştirilebilir.class);
+			final List<String> yazılar = new ArrayList<>(TCdeğiştirilebilir.nicelikler.size() + 1);
+			yazılar.add("Türkiye Cumhuriyeti");
+			for (final Nicelik nicelik : TCdeğiştirilebilir.nicelikler.values()) {
+				yazılar.add(nicelik.nitelik.ad + ": " + nicelik.değer());
 			}
-			yazıYaz(10, 50, OYUN_İÇİ_ARKAPLAN_RENGİ, moralYazıları);
+			final String[] yazıDizisi = new String[yazılar.size()];
+			for (int i = 0; i < yazıDizisi.length; i++)
+				yazıDizisi[i] = yazılar.get(i);
+			yazıYaz(10, 50, OYUN_İÇİ_ARKAPLAN_RENGİ, yazıDizisi);
 		}
 		çizer.setFont(KARE_ORANI_SAYAÇ_YAZI_TİPİ);
 		çizer.setColor(KARE_ORANI_SAYAÇ_RENGİ);

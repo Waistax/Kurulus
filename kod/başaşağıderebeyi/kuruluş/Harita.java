@@ -6,27 +6,25 @@
 package başaşağıderebeyi.kuruluş;
 
 import başaşağıderebeyi.kuruluş.dünya.*;
-import başaşağıderebeyi.kuruluş.nicelik.*;
-import başaşağıderebeyi.kütük.*;
+import başaşağıderebeyi.kuruluş.nesne.*;
 
 import java.util.*;
 
 public class Harita {
 	public final Dünya dünya;
-	public final List<Ulus> uluslar;
+	public final List<Nesne> nesneler;
 	
 	public Harita(Dünya dünya) {
 		this.dünya = dünya;
-		this.uluslar = new ArrayList<>();
+		this.nesneler = new ArrayList<>();
 	}
 	
-	public Ulus ulusEkle(String ad) {
-		Ulus ulus = new Ulus(ad);
-		Map<Tanımlayıcı, Nitelik> nitelikler = Kuruluş.KÜTÜK.haritaAl(Nitelik.class);
-		for (Tanımlayıcı tanımlayıcı : nitelikler.keySet())
-			if (tanımlayıcı.ad.startsWith("ulus_nitelik_"))
-				ulus.oluştur(nitelikler.get(tanımlayıcı));
-		uluslar.add(ulus);
-		return ulus;
+	public void nesneEkle(Nesne nesne) {
+		nesneler.add(nesne);
+	}
+	
+	public void nesneÇıkar(Nesne nesne) {
+		nesneler.remove(nesne);
+		nesne.yokEdildiğinde();
 	}
 }

@@ -9,7 +9,7 @@ public class DeğiştiriciParçası {
 	public Nitelik nitelik;
 	public boolean temel;
 	public float değer;
-
+	
 	public DeğiştiriciParçası(Nitelik nitelik, boolean temel, float değer) {
 		this.nitelik = nitelik;
 		this.temel = temel;

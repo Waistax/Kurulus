@@ -8,7 +8,7 @@ package başaşağıderebeyi.kuruluş.nicelik;
 public class SüreliDeğiştirici {
 	public final Değiştirici değiştirici;
 	public int süre;
-
+	
 	public SüreliDeğiştirici(Değiştirici değiştirici, int süre) {
 		this.değiştirici = değiştirici;
 		this.süre = süre;
